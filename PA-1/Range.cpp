@@ -29,18 +29,16 @@ Time: 2 sec
 Memory: 256 MB */
 
 #include <iostream>
-#include <vector>
 
-using std::cin;
-using std::cout;
-using std::endl;
-using std::vector;
+//using std::cin;
+//using std::cout;
+//using std::endl;
 
-void merge(vector<int> &iSeq, const int &lo, const int &mid, const int &hi)
+void merge(int *iSeq, const int &lo, const int &mid, const int &hi)
 {
     int LB = mid - lo;
     int LC = hi - mid;
-    vector<int> B(LB);
+    int B[LB];
     for (int i = 0; i < LB; ++i)
         B[i] = iSeq[lo + i];
     for (int i = 0, j = 0, k = 0; j < LB || k < LC;)
@@ -52,11 +50,11 @@ void merge(vector<int> &iSeq, const int &lo, const int &mid, const int &hi)
     }
 }
 
-void mergeSimplified(vector<int> &iSeq, const int &lo, const int &mid, const int &hi)
+void mergeSimplified(int *iSeq, const int &lo, const int &mid, const int &hi)
 {
     int LB = mid - lo;
     int LC = hi - mid;
-    vector<int> B(LB);
+    int B[LB];
     for (int i = 0; i < LB; ++i)
         B[i] = iSeq[lo + i];
     for (int i = 0, j = 0, k = 0; j < LB;)
@@ -68,7 +66,7 @@ void mergeSimplified(vector<int> &iSeq, const int &lo, const int &mid, const int
     }
 }
 
-void mergeSort(vector<int> &iSeq, const int &lo, const int &hi)
+void mergeSort(int *iSeq, const int &lo, const int &hi)
 {
     if (hi - lo < 2)
         return;
@@ -78,20 +76,41 @@ void mergeSort(vector<int> &iSeq, const int &lo, const int &hi)
     mergeSimplified(iSeq, lo, mid, hi);
 }
 
+int binSearch(const int *iSeq, const int &num, int lo, int hi)
+{
+    while (lo < hi)
+    {
+        int mid = (lo + hi) >> 1;
+        num < iSeq[mid] ? hi = mid : lo = mid + 1;
+    }
+    return --lo;
+}
+
 int main()
 {
-    int length, query, tmp;
-    cin >> length >> query;
-    vector<int> iSeq;
-    vector<int> result;
-    for (int cnt = 1; cnt <= length; ++cnt)
-    {
-        cin >> tmp;
-        iSeq.push_back(tmp);
-    }
+    int length, query;
+    scanf("%d %d", &length, &query);
+    //cin >> length >> query;
+    int iSeq[length], result[query];
+    for (int cnt = 0; cnt != length; ++cnt)
+        scanf("%d", &iSeq[cnt]);
+        //cin >> iSeq[cnt];
     mergeSort(iSeq, 0, length);
-    for (auto c : iSeq)
-        cout << c << " ";
-    cout << endl;
+
+    int lo, hi;
+    for (int cnt = 0; cnt != query; ++cnt)
+    {
+        scanf("%d %d", &lo, &hi);
+        //cin >> lo >> hi;
+        int lo_rank = binSearch(iSeq, lo, 0, length);
+        int hi_rank = binSearch(iSeq, hi, 0, length);
+        if (lo_rank == -1)
+            result[cnt] = hi_rank + 1;
+        else
+            result[cnt] = hi_rank - lo_rank + (lo == iSeq[lo_rank]);
+    }
+    for (auto c : result)
+        printf("%d\n", c);
+        //cout << c << endl;
     return 0;
 }

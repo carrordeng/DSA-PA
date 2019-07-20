@@ -22,7 +22,10 @@ public:
     inline ListNode *firstNode() const { return header->Succ; }
     inline ListNode *lastNode() const { return trailer->Pred; }
     ListNode *insertAt(const int &rank, const char &color);
+    int findEqual(ListNode *targetNode, ListNode *&leftNode, ListNode *&rightNode) const;
     void print() const;
+    void deleteInterval(ListNode *leftEnd, ListNode *rightEnd);
+    void zumaDelete(ListNode *targetNode);
     char deleteNode(ListNode *node);
     ~ZumaList();
 };
@@ -40,8 +43,8 @@ void ZumaList::init()
 
 const char &ZumaList::operator[](int rank) const
 {
-    ListNode *tmp = firstNode();
-    while (rank-- > 0)
+    ListNode *tmp = header;
+    while (rank-- >= 0)
         tmp = tmp->Succ;
     return tmp->colorCode;
 }
@@ -50,10 +53,11 @@ ListNode *ZumaList::insertAt(const int &rank, const char &color)
 {
     ListNode *newNode = new ListNode();
     newNode->colorCode = color;
-    ListNode *currNode = firstNode();
+    ListNode *currNode = header;
     int cnt = rank;
-    while (cnt-- > 0)
+    while (cnt-- >= 0)
         currNode = currNode->Succ;
+    ++_size;
     return currNode->insertAtcurr(newNode);
 }
 
@@ -68,15 +72,72 @@ ZumaList::ZumaList(std::string colorSeq)
     }
 }
 
+int ZumaList::findEqual(ListNode *targetNode, ListNode *&leftNode, ListNode *&rightNode) const
+{
+    int equalCnt = 0;
+    //Left
+    ListNode *currNode = targetNode->Pred;
+    while (currNode != header && (currNode->colorCode == targetNode->colorCode))
+    {
+        currNode = currNode->Pred;
+        ++equalCnt;
+    }
+    leftNode = currNode->Succ;
+    //Right
+    currNode = targetNode->Succ;
+    while (currNode != trailer && (currNode->colorCode == targetNode->colorCode))
+    {
+        currNode = currNode->Succ;
+        ++equalCnt;
+    }
+    rightNode = currNode->Pred;
+    return equalCnt;
+}
+
+void ZumaList::deleteInterval(ListNode *startNode, ListNode *endNode)
+{
+    ListNode *tmp, *leftEnd, *rightEnd;
+    while (startNode != endNode)
+    {
+        tmp = startNode->Succ;
+        deleteNode(startNode);
+        startNode = tmp;
+    }
+    leftEnd = startNode->Pred;
+    rightEnd = startNode->Succ;
+    deleteNode(startNode);
+}
+
+void ZumaList::zumaDelete(ListNode *targetNode)
+{
+    ListNode *leftNode = new ListNode;
+    ListNode *rightNode = new ListNode;
+    int equalCnt = 0;
+    equalCnt = findEqual(targetNode, leftNode, rightNode);
+    if (equalCnt > 1)
+    {
+        ListNode *llNode = leftNode->Pred;
+        ListNode *rrNode = rightNode->Succ;
+        deleteInterval(leftNode, rightNode);
+        if (llNode != header && rrNode != trailer && (llNode->colorCode == rrNode->colorCode))
+            zumaDelete(llNode);
+    }
+}
+
 void ZumaList::print() const
 {
     ListNode *tmp = firstNode();
-    while (tmp != trailer)
+    if (_size == 0)
+        printf("-\n");
+    else
     {
-        printf("%c", tmp->colorCode);
-        tmp = tmp->Succ;
+        while (tmp != trailer)
+        {
+            printf("%c", tmp->colorCode);
+            tmp = tmp->Succ;
+        }
+        printf("\n");
     }
-    printf("\n");
 }
 
 char ZumaList::deleteNode(ListNode *node)

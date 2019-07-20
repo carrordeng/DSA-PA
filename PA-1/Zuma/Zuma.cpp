@@ -67,8 +67,6 @@ List*/
 #include <iostream>
 #include <string>
 
-#define maxLength 10005
-
 using std::string;
 
 int main()
@@ -84,6 +82,7 @@ int main()
     {
         scanf("%d %c", &pos, &colorCode);
         ListNode *currNode = zuma.insertAt(pos, colorCode);
+        zuma.zumaDelete(currNode);
         zuma.print();
     }
     return 0;

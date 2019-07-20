@@ -37,7 +37,8 @@ launch.json
 *.out
 *.app
 
-# Results
+# Documents
+input.txt
 result.txt
 
 #others

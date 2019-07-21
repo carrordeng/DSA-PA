@@ -54,12 +54,14 @@ int main()
 {
     long N;
     scanf("%ld", &N);
-    long coordX[N];
-    long coordY[N];
+    long *coordX = new long[N];
+    long *coordY = new long[N];
     for (long i = 0; i != N; ++i)
         scanf("%ld %ld", &coordX[i], &coordY[i]);
     mergeSort(coordX, coordY, 0, N);
     printf("%ld", pairInside(coordY, 0, N));
+    delete[] coordX;
+    delete[] coordY;
     return 0;
 }
 
@@ -77,8 +79,8 @@ void merge(long *coordX, long *coordY, const long &lo, const long &mid, const lo
 {
     long lenB = mid - lo;
     long lenC = hi - mid;
-    long XB[lenB];
-    long YB[lenB];
+    long *XB = new long[lenB];
+    long *YB = new long[lenB];
     for (long i = 0; i != lenB; ++i)
     {
         XB[i] = coordX[lo + i];
@@ -97,6 +99,8 @@ void merge(long *coordX, long *coordY, const long &lo, const long &mid, const lo
             coordY[lo + itA++] = YB[itB++];
         }
     }
+    delete[] XB;
+    delete[] YB;
 }
 
 long pairInside(long *coordY, const long &lo, const long &hi)
@@ -113,7 +117,7 @@ long pairBetween(long *coordY, const long &lo, const long &mid, const long &hi)
 {
     long lenB = mid - lo;
     long lenC = hi - mid;
-    long YB[lenB];
+    long *YB= new long[lenB];
     long invCnt = 0;
     for (long itB = 0; itB != lenB; ++itB)
         YB[itB] = coordY[lo + itB];
@@ -127,5 +131,6 @@ long pairBetween(long *coordY, const long &lo, const long &mid, const long &hi)
             invCnt += lenC - itC;
         }
     }
+    delete[] YB;
     return invCnt;
 }

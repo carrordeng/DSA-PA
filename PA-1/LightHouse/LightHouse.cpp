@@ -117,8 +117,8 @@ long pairBetween(long *coordY, const long &lo, const long &mid, const long &hi)
 {
     long lenB = mid - lo;
     long lenC = hi - mid;
-    long *YB= new long[lenB];
-    long invCnt = 0;
+    long *YB = new long[lenB];
+    long pairCnt = 0;
     for (long itB = 0; itB != lenB; ++itB)
         YB[itB] = coordY[lo + itB];
     for (long itA = 0, itB = 0, itC = 0; itB != lenB;)
@@ -128,9 +128,9 @@ long pairBetween(long *coordY, const long &lo, const long &mid, const long &hi)
         if (itC == lenC || YB[itB] <= coordY[mid + itC])
         {
             coordY[lo + itA++] = YB[itB++];
-            invCnt += lenC - itC;
+            pairCnt += lenC - itC;
         }
     }
     delete[] YB;
-    return invCnt;
+    return pairCnt;
 }

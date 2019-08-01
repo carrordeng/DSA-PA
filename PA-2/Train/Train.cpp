@@ -41,6 +41,7 @@ Restrictions
 Time: 2 sec
 Memory: 256 MB */
 
+#include "Stack.h"
 #include <iostream>
 
 int main()
@@ -48,7 +49,13 @@ int main()
     long N, M;
     scanf("%ld %ld", &N, &M);
     long *inputOrder = new long[N];
+    Stack stack;
     for (long i = 0; i != N; ++i)
+    {
         scanf("%ld", &inputOrder[i]);
+        stack.push(N - i);
+    }
+    std::cout << stack.isEmpty() << std::endl;
+    stack.print();
     return 0;
 }

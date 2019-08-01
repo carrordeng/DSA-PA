@@ -6,9 +6,24 @@
 class Stack : public List
 {
 public:
-    inline void push(const long &num) { insertAt(0, num); }
+    long depth;
+    Stack() { depth = 0; }
+    Stack(const long &dep) { depth = dep; }
+    inline bool push(const long &num);
     inline long pop();
+    inline long top() { return firstNode()->Num; }
 };
+
+inline bool Stack::push(const long &num)
+{
+    if (size() == depth)
+        return false;
+    else
+    {
+        insertAt(0, num);
+        return true;
+    }
+}
 
 inline long Stack::pop()
 {

@@ -44,61 +44,70 @@ Memory: 256 MB */
 #include "Stack.h"
 #include <iostream>
 
-bool shuffleStack(const long &N, long const *targetOrder, Stack &stackOrigin, Stack &stackM, int *&opCode);
+bool shuffleStack(const long &N, long const *B, Stack &A, Stack &station, int *&opCode);
 
 int main()
 {
     long N, M;
     scanf("%ld %ld", &N, &M);
-    long *targetOrder = new long[N];
+    long *B = new long[N];
     int *opCode = new int[2 * N]; //0:push, 1:pop
-    Stack stackOrigin = Stack(N);
-    Stack stackM = Stack(M);
+    Stack A = Stack(N);
+    Stack station = Stack(M);
     for (long i = 0; i != N; ++i)
     {
-        scanf("%ld", &targetOrder[i]);
-        stackOrigin.push(N - i);
+        scanf("%ld", &B[i]);
+        A.push(N - i);
     }
-    if (shuffleStack(N, targetOrder, stackOrigin, stackM, opCode))
+    if (shuffleStack(N, B, A, station, opCode))
     {
         for (long i = 0; i != 2 * N; ++i)
-            opCode ? printf("pop\n") : printf("push\n");
+            opCode[i] ? printf("pop\n") : printf("push\n");
     }
     else
-        printf("no\n");
+        printf("No\n");
     return 0;
 }
 
-bool shuffleStack(const long &N, long const *targetOrder, Stack &stackOrigin, Stack &stackM, int *&opCode)
+bool shuffleStack(const long &N, long const *B, Stack &A, Stack &station, int *&opCode)
 {
     bool isFeasible = true;
     long opCnt = 0;
-    long targetCnt = 0;
-    stackM.push(stackOrigin.pop());
+    long BCnt = 0;
+    station.push(A.pop());
     opCode[opCnt++] = 0;
-    while (isFeasible && !stackOrigin.isEmpty() && targetCnt < N)
+    while (isFeasible && BCnt < N)
     {
-        if (targetOrder[targetCnt] < stackOrigin.top())
+        if (B[BCnt] < A.top() || A.isEmpty())
         {
-            if (targetOrder[targetCnt] != stackM.top() || stackM.isEmpty())
-                isFeasible = false;
-            else
+            if (B[BCnt] == station.top())
             {
-                stackM.pop();
+                station.pop();
                 opCode[opCnt++] = 1;
-                targetCnt++;
+                BCnt++;
             }
+            else
+                isFeasible = false;
+        }
+        else if(B[BCnt] == A.top())
+        {
+            if (station.push(A.pop()))
+            {
+                opCode[opCnt++] = 0;
+                station.pop();
+                opCode[opCnt++] = 1;
+                BCnt++;
+            }
+            else
+                isFeasible = false;
         }
         else
         {
-            if (stackM.push(stackOrigin.pop()))
+            if (station.push(A.pop()))
                 opCode[opCnt++] = 0;
             else
                 isFeasible = false;
         }
     }
-    if (isFeasible && stackOrigin.isEmpty() && targetCnt == N - 1)
-        return true;
-    else
-        return false;
+    return isFeasible;
 }

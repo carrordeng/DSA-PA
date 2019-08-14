@@ -75,7 +75,7 @@ void List::print() const
     {
         while (tmp != trailer)
         {
-            printf("%ld", tmp->Num);
+            printf("%ld ", tmp->Num);
             tmp = tmp->Succ;
         }
         printf("\n");
